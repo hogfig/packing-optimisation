@@ -1,0 +1,31 @@
+@startuml Geometry
+interface   "IGeometry<GeometryData>"
+"IGeometry<GeometryData>" : virtual bool IsIntersect(IGeometry *geometry) = 0
+"IGeometry<GeometryData>" : virtual void Move(IGeometry *geometry) = 0
+"IGeometry<GeometryData>" : GeometryData m_geometry_data
+"IGeometry<GeometryData>" : Point GetCenterPoint()
+"IGeometry<GeometryData>" : GeometryData GetGeometryData()
+"IGeometry<GeometryData>" : void SetCenterPoint(Point n_center)
+
+class   CircleData<GeometryData>
+CircleData : Point m_center_point
+CircleData : double m_radius
+CircleData : Point GetCenterPoint()
+CircleData : void SetCenterPoint(Point center_point)
+CircleData : double GetRadius()
+CircleData : void SetRadius(double radius)
+CircleData : CircleData& operator=(const CircleData& circle_data)
+CircleData :  bool operator==(const CircleData& obj) const
+CircleData : friend std::ostream& operator<<(std::ostream& os, const CircleData cd);
+CircleData : friend std::ofstream& operator<<(std::ofstream& os, const CircleData cd);
+
+class           Circle
+Circle : bool IsIntersect(IGeometry<CircleData> *r_circle) override
+Circle : void Move(IGeometry<CircleData> *r_circle) override
+
+class           GeometryHelper
+
+
+Circle --> "IGeometry<GeometryData>" : "inherits"
+"IGeometry<GeometryData>" --> CircleData : "contains"
+@enduml

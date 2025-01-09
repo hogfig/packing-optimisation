@@ -1,0 +1,2 @@
+add_subdirectory(GeometryTests)
+add_subdirectory(EATests)
