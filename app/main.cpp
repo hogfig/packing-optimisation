@@ -58,8 +58,8 @@ int main()
     GenotypeDataVector GDataVector;
     Genotype<CircleFactory, CircleData> m_Genotype;
     EACircle EA;
-    int populationNumber = 2000;
-    int geometryNumber =6;
+    int populationNumber = 1000;
+    int geometryNumber = 8;
     int numberOfIterations = 10000;
 
     CData.SetRadius(1);
@@ -84,7 +84,7 @@ int main()
             EA.SetMutationDelta(2);
          }
          if(i==130){
-            EA.SetMutationDelta(1);
+            EA.SetMutationDelta(0.3);
          }
          temperatura++;
      }
