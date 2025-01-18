@@ -1,31 +1,58 @@
-import csv
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from matplotlib import style
-import pandas as pd
+from matplotlib.animation import FuncAnimation
+import csv
+import sys 
 
-style.use('fivethirtyeight')
-fig = plt.figure()
-ax = fig.add_subplot(1,1,1)
+def read_circle_data(file_path):
+    batches = []
+    current_batch = []
 
-def animate(i):
-    with open('/Users/robertjelic/Documents/C++/Ellipses/tests/EATests/CSV_Files/highest_fitness_geometry.txt') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        count = 0;
-        for row in csv_reader:
-            if(row):
-                circle_patch = plt.Circle((float(row[0]), float(row[1])), float(row[2]), color=row[-1])
-                circle_patch.fill = False
-                ax.add_patch(circle_patch)
+    with open(file_path, 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if not row:  # Empty line indicates a new batch
+                if current_batch:
+                    batches.append(current_batch)
+                    current_batch = []
             else:
-                plt.title(count)
-                ax.plot()
-                plt.pause(2)
-                ax.clear()
-                count+=1
-        ax.plot()
-        plt.pause(2)
-        ax.clear()
+                x, y, radius, color = row
+                current_batch.append((float(x), float(y), float(radius), color))
 
-ani = animation.FuncAnimation(fig, animate, interval=2000, cache_frame_data=False)
-plt.show()
+        if current_batch:  # Add the last batch if the file doesn't end with an empty line
+            batches.append(current_batch)
+
+    return batches
+
+def update(frame, batches, ax):
+    batch = batches[frame]
+    ax.clear()
+    ax.set_xlim(-10, 10)
+    ax.set_ylim(-10, 10)
+    
+    for circle in batch:
+        x, y, radius, color = circle
+        circle_patch = plt.Circle((x, y), radius, color=color, alpha=0.5)
+        ax.add_patch(circle_patch)
+    ax.set_title(f"Batch {frame + 1}")
+
+def main():
+    # File path to the CSV file
+    file_path = sys.argv[1]
+
+    # Read the circle data from the CSV file
+    batches = read_circle_data(file_path)
+
+    # Set up the figure and axis for the animation
+    fig, ax = plt.subplots()
+    ax.set_xlim(-10, 10)
+    ax.set_ylim(-10, 10)
+
+    # Create the animation
+    num_batches = len(batches)
+    ani = FuncAnimation(fig, update, frames=num_batches, fargs=(batches, ax), interval=1000, repeat=True)
+
+    # Display the animation
+    plt.show()
+
+if __name__ == "__main__":
+    main()
