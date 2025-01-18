@@ -1,7 +1,9 @@
 #include "CircleData.hpp"
 #include<fstream>
 
-CircleData::CircleData(Point center_point, double r_) : m_center_point{center_point}, m_radius{r_} {
+CircleData::CircleData(Point center_point, double r_) : 
+IGeometryData{center_point}, 
+m_radius{r_} {
 
 }
 
@@ -28,14 +30,6 @@ std::ostream& operator<<(std::ostream& os, CircleData cd){
 std::ofstream& operator<<(std::ofstream& os, CircleData cd){
     os << cd.m_center_point <<','<< cd.m_radius;
     return os;
-}
-
-Point CircleData::GetCenterPoint(){
-    return m_center_point;
-}
-
-void CircleData::SetCenterPoint(Point center_point){
-    m_center_point = center_point;
 }
 
 double CircleData::GetRadius(){

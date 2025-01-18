@@ -51,16 +51,16 @@ TEST_F(PopulationFixture, PopulationTest){
     my_log.LogVectorData(genotypes[0]->GetGeometries());
 }
 
-TEST_F(PopulationFixture, SortPopulationTest){
+TEST_F(PopulationFixture, SortPopulationDescendingTest){
     Population<CircleFactory, CircleData> pop(5, GDataVector);
     pop.GeneratePopulation();
     auto genotypes = pop.GetPopulation();
     //calculate fitness
     pop.CalculateFitnessFunction();
-    pop.SortPopulation();
+    pop.SortPopulationDescending();
     genotypes = pop.GetPopulation();
     
-    EXPECT_LT(genotypes[0]->GetFitnessScore(),genotypes[4]->GetFitnessScore());
+    EXPECT_GT(genotypes[0]->GetFitnessScore(),genotypes[4]->GetFitnessScore());
 }
 
 TEST_F(PopulationFixture, GetPopulationNumberTest){

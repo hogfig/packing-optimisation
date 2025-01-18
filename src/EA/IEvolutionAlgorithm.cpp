@@ -1,4 +1,4 @@
-#include "EvolutionAlgorithm.hpp"
+#include "IEvolutionAlgorithm.hpp"
 #include <random>
 #include <time.h>
 #include "Genotype.hpp"
@@ -20,42 +20,44 @@ namespace{
 };
 
 template<typename Factory, typename GeometryData>
-EvolutionAlgorithm<Factory, GeometryData>::EvolutionAlgorithm(int populationSize, std::vector<GenotypeData<GeometryData>> genotypeData):
-m_population{populationSize,genotypeData},
-m_crossover_probability{0.6},
-m_mutation_probability{0.1},
-m_mutation_delta{1}
+IEvolutionAlgorithm<Factory, GeometryData>::IEvolutionAlgorithm(
+    int populationSize, 
+    std::vector<GenotypeData<GeometryData>> genotypeData,
+    double mutation_probability,
+    double rossover_probability,
+    float mutation_delta) :
+    m_population{populationSize,genotypeData},
+    m_crossover_probability{mutation_probability},
+    m_mutation_probability{rossover_probability},
+    m_mutation_delta{mutation_delta}
 {
-    if(populationSize%2 != 0 || populationSize == 0){
-        std::cout<<"Population number has to be a multiple of 2!"<<std::endl;
-        exit(1);
-    }
-    m_population.GeneratePopulation();
+
 }
+
 template<typename Factory, typename GeometryData>
-void EvolutionAlgorithm<Factory, GeometryData>::SortPopulation(){
+void IEvolutionAlgorithm<Factory, GeometryData>::SortPopulation(){
     m_population.SortPopulationDescending();
 }
 
 template<typename Factory, typename GeometryData>
-std::vector<std::shared_ptr<Genotype<Factory, GeometryData>>> EvolutionAlgorithm<Factory, GeometryData>::GetPopulation(){
+std::vector<std::shared_ptr<Genotype<Factory, GeometryData>>> IEvolutionAlgorithm<Factory, GeometryData>::GetPopulation(){
     return m_population.GetPopulation();
 }
 
 template<typename Factory, typename GeometryData>
-void EvolutionAlgorithm<Factory, GeometryData>::SetCrossoverProbability(double p)
+void IEvolutionAlgorithm<Factory, GeometryData>::SetCrossoverProbability(double p)
 {
     m_crossover_probability = p;
 }
 
 template<typename Factory, typename GeometryData>
-void EvolutionAlgorithm<Factory, GeometryData>::SetMutationProbability(double p)
+void IEvolutionAlgorithm<Factory, GeometryData>::SetMutationProbability(double p)
 {
     m_mutation_probability = p;
 }
 
 template<typename Factory, typename GeometryData>
-    void EvolutionAlgorithm<Factory, GeometryData>::NormaliseFitnesScore(){
+    void IEvolutionAlgorithm<Factory, GeometryData>::NormaliseFitnesScore(){
         auto genotypeVecor = m_population.GetPopulation();
         double cumulativeFitnessValue{0};
         double checkNormalisation{0};
@@ -72,7 +74,7 @@ template<typename Factory, typename GeometryData>
 
 //Selection based on game of rullet
 template<typename Factory, typename GeometryData>
-void EvolutionAlgorithm<Factory, GeometryData>::Selection(){
+void IEvolutionAlgorithm<Factory, GeometryData>::Selection(){
     m_population.CalculateFitnessFunction();
     NormaliseFitnesScore();
     m_population.SortPopulationAscending();
@@ -103,7 +105,7 @@ void EvolutionAlgorithm<Factory, GeometryData>::Selection(){
 }
 
 template<typename Factory, typename GeometryData>
-void EvolutionAlgorithm<Factory, GeometryData>::CrossoverPairOfGenomes(std::shared_ptr<Genotype<Factory,GeometryData>> &first, std::shared_ptr<Genotype<Factory,GeometryData>> &second){
+void IEvolutionAlgorithm<Factory, GeometryData>::CrossoverPairOfGenomes(std::shared_ptr<Genotype<Factory,GeometryData>> &first, std::shared_ptr<Genotype<Factory,GeometryData>> &second){
     auto first_geometries = first->GetGeometries();
     auto second_geometries = second->GetGeometries();
     m_GH.AllignGeometries(first_geometries,second_geometries);
@@ -123,7 +125,7 @@ void EvolutionAlgorithm<Factory, GeometryData>::CrossoverPairOfGenomes(std::shar
 }
 
 template<typename Factory, typename GeometryData>
-void EvolutionAlgorithm<Factory, GeometryData>::Crossover(){
+void IEvolutionAlgorithm<Factory, GeometryData>::Crossover(){
     std::vector<std::shared_ptr<Genotype<Factory,GeometryData>>> temp_population;
     std::vector<std::shared_ptr<Genotype<Factory,GeometryData>>> population = m_population.GetPopulation();
     //Make random pairs.
@@ -154,7 +156,7 @@ void EvolutionAlgorithm<Factory, GeometryData>::Crossover(){
 }
 
 template<typename Factory, typename GeometryData>
-void EvolutionAlgorithm<Factory, GeometryData>::Mutation(){
+void IEvolutionAlgorithm<Factory, GeometryData>::Mutation(){
     std::vector<std::shared_ptr<Genotype<Factory,GeometryData>>> population = m_population.GetPopulation();
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -182,9 +184,9 @@ void EvolutionAlgorithm<Factory, GeometryData>::Mutation(){
 }
 
 template<typename Factory, typename GeometryData>
-void EvolutionAlgorithm<Factory, GeometryData>::SetMutatuinDelta(float d)
+void IEvolutionAlgorithm<Factory, GeometryData>::SetMutationDelta(float d)
 {
     m_mutation_delta = d;
 }
 
-template class EvolutionAlgorithm<CircleFactory, CircleData>;
+template class IEvolutionAlgorithm<CircleFactory, CircleData>;
