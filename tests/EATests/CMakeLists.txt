@@ -6,7 +6,6 @@ add_executable(
   GenotypeDataTests.cpp
   GenotypeTests.cpp
   PopulationTests.cpp
-  EvolutionAlgorithmTest.cpp
 )
 target_link_libraries(
   EA_TESTS

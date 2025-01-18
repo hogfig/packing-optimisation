@@ -1,10 +1,10 @@
 #include <iostream>
 #include <iomanip>
- #include "../src/EA/EvolutionAlgorithm.hpp"
- #include "../src/EA/GenotypeData.hpp"
- #include "../src/Geometries/CircleFactory.hpp"
- #include "../src/EA/Genotype.hpp"
- #include "../src/Geometries/Logger.hpp"
+#include "../src/EA/GenotypeData.hpp"
+#include "../src/Geometries/CircleFactory.hpp"
+#include "../src/EA/Genotype.hpp"
+#include "../src/Geometries/Logger.hpp"
+#include "EACircle.hpp"
 
 using GenotypeDataVector = std::vector<GenotypeData<CircleData>>;
 
@@ -57,16 +57,16 @@ int main()
     CircleData CData;
     GenotypeDataVector GDataVector;
     Genotype<CircleFactory, CircleData> m_Genotype;
-    EvolutionAlgorithm<CircleFactory,CircleData> EA;
+    EACircle EA;
     int populationNumber = 2000;
-    int geometryNumber = 8;
-    int numberOfIterations = 20000;
+    int geometryNumber =6;
+    int numberOfIterations = 10000;
 
     CData.SetRadius(1);
     GenotypeData<CircleData> GData1 = GenotypeData<CircleData>(geometryNumber, R_0_10_0_10, CData);
     GDataVector.push_back(GData1);
     m_Genotype = Genotype<CircleFactory, CircleData>(GDataVector);
-    EA = EvolutionAlgorithm<CircleFactory,CircleData>(populationNumber, GDataVector);
+    EA = EACircle(populationNumber, GDataVector);
 
     std::string filePath = "/Users/robertjelic/Documents/C++/Ellipses/app/CSV_Files/";
     Logger<CircleData> bestScoreLog( filePath, "best_score.txt");
@@ -74,17 +74,17 @@ int main()
     
     double highest_fitness = 0;
     int temperatura = 2;
-    EA.SetMutatuinDelta(3);
+    EA.SetMutationDelta(3);
     EA.SetCrossoverProbability(0.75);
     for(int i=0; i<numberOfIterations; i++){
     //mutacija metoda kaljenja
      if(i>1 && i%5==0 && temperatura<=10){
          EA.SetMutationProbability(1/temperatura);
          if(i==70){
-            EA.SetMutatuinDelta(2);
+            EA.SetMutationDelta(2);
          }
          if(i==130){
-            EA.SetMutatuinDelta(1);
+            EA.SetMutationDelta(1);
          }
          temperatura++;
      }

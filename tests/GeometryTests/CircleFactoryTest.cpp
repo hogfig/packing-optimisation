@@ -48,7 +48,7 @@ TEST_F(CircleFactoryFixture, CircleMoveTest){
     circle1->SetCenterPoint(Point(1,1));
     circle1->GetGeometryData().SetRadius(1);
     circle2->SetCenterPoint(Point(1,1));
-    circle1->GetGeometryData().SetRadius(3);
+    circle2->GetGeometryData().SetRadius(3);
     EXPECT_TRUE(circle1->IsIntersect(circle2.get()));
     circle1->Move(circle2.get());
     EXPECT_FALSE(circle1->IsIntersect(circle2.get()));

@@ -5,6 +5,7 @@ enable_testing()
 
 add_executable(
   EA_APP
+  EACircle.cpp
   main.cpp
 )
 target_link_libraries(

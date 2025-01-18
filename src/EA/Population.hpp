@@ -31,7 +31,7 @@ class Population{
         /**
          * Erases current population and generates a new population. Each genom get's random geometries in
          * the set ranges (set by the GenotypeDataVector). After creating geometries, they are rearanged in a way
-         * they don't intersect with eachputher. 
+         * they don't intersect with eachother. 
          */
         void GeneratePopulation();
 

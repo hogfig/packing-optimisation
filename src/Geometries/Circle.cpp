@@ -42,8 +42,8 @@ void Circle::Move(IGeometry<CircleData> *r_circle)
         
         //A circle on top of another circle
         if(dx == 0 && dy ==0){
-            r_circle->SetCenterPoint(Point(r_circle->GetCenterPoint().x + r_circle->GetGeometryData().GetRadius()/2, r_circle->GetCenterPoint().y));
-            SetCenterPoint(Point(GetCenterPoint().x - GetGeometryData().GetRadius()/2, GetCenterPoint().y));
+            r_circle->SetCenterPoint(Point(r_circle->GetCenterPoint().x + r_circle->GetGeometryData().GetRadius(), r_circle->GetCenterPoint().y));
+            SetCenterPoint(Point(GetCenterPoint().x - GetGeometryData().GetRadius(), GetCenterPoint().y));
             return;
         }
 

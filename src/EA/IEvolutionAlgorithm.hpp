@@ -6,31 +6,40 @@
  * @note Before using the EvolutionAlgorithm class be sure to define the Genotype::CalculateFitnesFunction() frined function!
  */
 template<typename Factory, typename GeometryData>
-class EvolutionAlgorithm{
+class IEvolutionAlgorithm{
     public:
         using Genotype_Ptr = std::shared_ptr<Genotype<Factory, GeometryData>>;
         using GenotypeVector = std::vector<Genotype_Ptr>;
         using GeometryVector = std::vector<std::shared_ptr<IGeometry<GeometryData>>>;
-
-        EvolutionAlgorithm() = default;
         /**
-         * @param populationSize The number of a population.
-         * @param genotypeData The parameters describing the Genotype of the population.
+         * Constructor for the Evolution Algorithm base class parameters.
+         * @param populationSize (int) Size of the population
+         * @param genotypeData (std::vector<GenotypeData<GeometryData>>) Genotype data
+         * @param mutation_probability (double) Mutation probability
+         * @param crossover_probability (double) Crossover probability
+         * @param mutation_delta (float) The maximum possible mutation delta for a parameter
+         * 
          */
-        EvolutionAlgorithm(int populationSize, std::vector<GenotypeData<GeometryData>> genotypeData);
-        ~EvolutionAlgorithm() = default;;
-        void Selection();
-        void Crossover();
-        void Mutation();
+        IEvolutionAlgorithm(int populationSize, 
+                            std::vector<GenotypeData<GeometryData>> genotypeData,
+                            double mutation_probability,
+                            double crossover_probability,
+                            float mutation_delta);
+
+        IEvolutionAlgorithm() = default;
+        virtual ~IEvolutionAlgorithm() = default;
+
+        virtual void Selection();
+        virtual void Crossover();
+        virtual void Mutation();
 
         GenotypeVector GetPopulation();
         void SortPopulation();
         void SetCrossoverProbability(double p);
         void SetMutationProbability(double p);
-        void SetMutatuinDelta(float d);
+        void SetMutationDelta(float d);
     protected:
         void NormaliseFitnesScore();
-    private:
         void CrossoverPairOfGenomes(Genotype_Ptr &first, Genotype_Ptr &second);
 
         Population<Factory, GeometryData> m_population;
