@@ -4,8 +4,6 @@
 
 class EACircle : public IEvolutionAlgorithm<CircleFactory, CircleData>
 {
-private:
-    /* data */
 public:
     EACircle(int populationSize, std::vector<GenotypeData<CircleData>> genotypeData);
     EACircle() = default;

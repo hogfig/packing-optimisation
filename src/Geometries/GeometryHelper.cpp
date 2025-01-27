@@ -29,25 +29,26 @@ void GeometryHelper<GeometryData>::RearangeGeometries(IGeometry_Vector &geometri
     do
     {
         CollisionCheck(geometries, pairs);
-        MoveObjects(geometries, pairs);
+        MoveObjects(pairs);
         pairs.erase(pairs.begin(), pairs.end());
         CollisionCheck(geometries, pairs);
     } while (pairs.size() != 0);
 }
 
 template<typename GeometryData>
-void GeometryHelper<GeometryData>::MoveObjects(IGeometry_Vector &geometries, IGeometry_Vector &pairs)
+void GeometryHelper<GeometryData>::MoveObjects(IGeometry_Vector &pairs)
 {
-    if (pairs.size() > 0)
+    if (pairs.size() == 0)
+    return;
+    
+    for (int i = 0; i < pairs.size() - 1; i++)
     {
-        for (int i = 0; i < pairs.size() - 1; i++)
+        if (pairs[i]->IsIntersect(pairs[i + 1].get()))
         {
-            if (pairs[i]->IsIntersect(pairs[i + 1].get()))
-            {
-                pairs[i]->Move(pairs[i + 1].get());
-            }
+            pairs[i]->Move(pairs[i + 1].get());
         }
     }
+    
 }
 
 template<typename GeometryData>

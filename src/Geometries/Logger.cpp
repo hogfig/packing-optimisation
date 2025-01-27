@@ -36,8 +36,8 @@ void Logger<GeometryData>::InsertEmptyLine(){
 }
 
 template<typename GeometryData>
-void Logger<GeometryData>::LogFitnessScore(double fitness_value, std::string color){
-    m_file << fitness_value << "," ;
+void Logger<GeometryData>::LogDoubleValue(double d_value, std::string color){
+    m_file << d_value << "," ;
     m_file<< color;
     m_file << std::endl;
 }

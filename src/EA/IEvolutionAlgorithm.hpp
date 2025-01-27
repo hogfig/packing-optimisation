@@ -3,7 +3,7 @@
 #include "Genotype.hpp"
 #include "GeometryHelper.hpp"
 /**
- * @note Before using the EvolutionAlgorithm class be sure to define the Genotype::CalculateFitnesFunction() frined function!
+ * @note Before using the EvolutionAlgorithm class be sure to define the Genotype::CalculateFitnesFunction() friend function!
  */
 template<typename Factory, typename GeometryData>
 class IEvolutionAlgorithm{
@@ -29,22 +29,63 @@ class IEvolutionAlgorithm{
         IEvolutionAlgorithm() = default;
         virtual ~IEvolutionAlgorithm() = default;
 
+        /**
+         * Perform the selection of the population based on fitness values.
+         */
         virtual void Selection();
+
+        /**
+         * Perform the crossover of the population based on the crossover probability.
+         */
         virtual void Crossover();
+
+        /**
+         * Perform the mutation of the population based on the mutation probability.
+         */
         virtual void Mutation();
 
+        /**
+         * Sort the population, default in descending order.
+         */
+        virtual void SortPopulation();
+
+        /**
+         * @returns GenotypeVector The current population.
+         */
         GenotypeVector GetPopulation();
-        void SortPopulation();
+
+        /**
+         * @param double The crossover probability. Value between 0 and 1.
+         */
         void SetCrossoverProbability(double p);
+
+        /**
+         * @param double The mutation probability. Value between 0 and 1.
+         */
         void SetMutationProbability(double p);
+
+        /**
+         * @param float The mutation delta. Maximal value of mutation for parameters.
+         */
         void SetMutationDelta(float d);
     protected:
+
+        /**
+         * Normalises fitness values of the population, so all values lay between 0 and 1.
+         */
         void NormaliseFitnesScore();
-        void CrossoverPairOfGenomes(Genotype_Ptr &first, Genotype_Ptr &second);
+
+        /**
+         * Perform a crossover of a pair of genomes.
+         * 
+         * @param first A genotype ready for crossover.
+         * @param second A genotype ready for crossover.
+         */
+        virtual void CrossoverPairOfGenomes(Genotype_Ptr &first, Genotype_Ptr &second);
 
         Population<Factory, GeometryData> m_population;
-        double m_mutation_probability{}; //default 0.2
-        double m_crossover_probability{}; //default 0.5
+        double m_mutation_probability{};
+        double m_crossover_probability{}; 
         float m_mutation_delta{};
         GeometryHelper<GeometryData> m_GH;
 };

@@ -46,6 +46,10 @@ class Population{
          */
         void SortPopulationDescending();
         
+        /**
+         * Sorting the population (m_genotypes) according to the fitness function score.
+         * Sorted in ascending order.
+         */
         void SortPopulationAscending();
 
         /**

@@ -46,7 +46,13 @@ class Logger{
          */
         void InsertEmptyLine();
 
-        void LogFitnessScore(double fitness_value, std::string color="black");
+        /**
+         * @brief Streams a double value to the CSV file.
+         * 
+         * @param d_value A double value to be streamed to the CSV file.
+         * @param color Color associated to the value, default is black.
+         */
+        void LogDoubleValue(double d_value, std::string color="black");
 
     private:
         std::string m_directory;

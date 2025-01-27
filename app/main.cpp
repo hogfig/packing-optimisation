@@ -80,12 +80,6 @@ int main()
     //mutacija metoda kaljenja
      if(i>1 && i%5==0 && temperatura<=10){
          EA.SetMutationProbability(1/temperatura);
-         if(i==70){
-            EA.SetMutationDelta(2);
-         }
-         if(i==130){
-            EA.SetMutationDelta(0.3);
-         }
          temperatura++;
      }
 
@@ -106,7 +100,7 @@ int main()
         bestScoreLog.InsertEmptyLine();
      }
 
-     fitnessScoreLog.LogFitnessScore(fitness);
+     fitnessScoreLog.LogDoubleValue(highest_fitness);
     }
 
 
