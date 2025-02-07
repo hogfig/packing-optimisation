@@ -1,2 +1,3 @@
 add_subdirectory(GeometryTests)
 add_subdirectory(EATests)
+add_subdirectory(MultithreadingTests)

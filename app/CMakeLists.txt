@@ -12,5 +12,6 @@ target_link_libraries(
   EA_APP
   PUBLIC
   GEO_LIB
+  MULTITHREADING
   EA_LIB
 )

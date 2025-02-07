@@ -1,2 +1,3 @@
 add_subdirectory(Geometries)
+add_subdirectory(Multithreading)
 add_subdirectory(EA)

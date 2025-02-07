@@ -31,7 +31,6 @@ IEvolutionAlgorithm<Factory, GeometryData>::IEvolutionAlgorithm(
     m_mutation_probability{rossover_probability},
     m_mutation_delta{mutation_delta}
 {
-
 }
 
 template<typename Factory, typename GeometryData>
@@ -122,65 +121,6 @@ void IEvolutionAlgorithm<Factory, GeometryData>::CrossoverPairOfGenomes(std::sha
 
     first->SetGeometries(first_geometries);
     second->SetGeometries(second_geometries);
-}
-
-template<typename Factory, typename GeometryData>
-void IEvolutionAlgorithm<Factory, GeometryData>::Crossover(){
-    std::vector<std::shared_ptr<Genotype<Factory,GeometryData>>> temp_population;
-    std::vector<std::shared_ptr<Genotype<Factory,GeometryData>>> population = m_population.GetPopulation();
-    //Make random pairs.
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(population.begin(), population.end(),g);
-    
-    //For each pair check if crossover will take place.
-    srand( (unsigned)time( NULL ) );
-    for(int i=0; i<population.size()/2; i++){
-        float r_num = (float)rand()/RAND_MAX;
-        if(r_num < m_crossover_probability){
-            //Crossover pair.
-            CrossoverPairOfGenomes(population[2*i], population[(2*i)+1]);
-            //Put new pair in temporary population.
-            temp_population.push_back(std::make_shared<Genotype<Factory,GeometryData>>(*population[2*i]));
-            temp_population.push_back(std::make_shared<Genotype<Factory,GeometryData>>(*population[(2*i)+1]));
-        }else{
-            temp_population.push_back(std::make_shared<Genotype<Factory,GeometryData>>(*population[2*i]));
-            temp_population.push_back(std::make_shared<Genotype<Factory,GeometryData>>(*population[(2*i)+1]));
-        }
-    }
-    //Set new population.
-    m_population.SetPopulation(temp_population);
-    //Update the fitness function
- //   m_population.CalculateFitnessFunction();
-   // NormaliseFitnesScore();
-}
-
-template<typename Factory, typename GeometryData>
-void IEvolutionAlgorithm<Factory, GeometryData>::Mutation(){
-    std::vector<std::shared_ptr<Genotype<Factory,GeometryData>>> population = m_population.GetPopulation();
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    
-    for(std::shared_ptr<Genotype<Factory,GeometryData>> genotype : population){
-        float r_num = (float)rand()/RAND_MAX;
-        if(r_num < m_mutation_probability){
-            auto geometries = genotype->GetGeometries();
-            //select one random geometry
-            std::uniform_int_distribution<> geometry_distr(0,geometries.size()-1);
-            auto random_geometry = geometries[geometry_distr(gen)];
-            //move it's center point randomly by delta
-            Point current_point = random_geometry->GetCenterPoint();
-            //can be  -1, 0, 1
-            std::uniform_int_distribution<> distr(-1, 1);
-            current_point.x += distr(gen)*m_mutation_delta;
-            current_point.y += distr(gen)*m_mutation_delta;
-
-            random_geometry->SetCenterPoint(current_point);
-            m_GH.RearangeGeometries(geometries);
-            int i = 2;
-        }
-    }
-    m_population.CalculateFitnessFunction();
 }
 
 template<typename Factory, typename GeometryData>

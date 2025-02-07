@@ -2,6 +2,7 @@
 #include "Population.hpp"
 #include "Genotype.hpp"
 #include "GeometryHelper.hpp"
+#include "ThreadPool.hpp"
 /**
  * @note Before using the EvolutionAlgorithm class be sure to define the Genotype::CalculateFitnesFunction() friend function!
  */
@@ -37,12 +38,12 @@ class IEvolutionAlgorithm{
         /**
          * Perform the crossover of the population based on the crossover probability.
          */
-        virtual void Crossover();
+        virtual void Crossover() = 0;
 
         /**
          * Perform the mutation of the population based on the mutation probability.
          */
-        virtual void Mutation();
+        virtual void Mutation() = 0;
 
         /**
          * Sort the population, default in descending order.

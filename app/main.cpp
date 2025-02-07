@@ -58,9 +58,9 @@ int main()
     GenotypeDataVector GDataVector;
     Genotype<CircleFactory, CircleData> m_Genotype;
     EACircle EA;
-    int populationNumber = 1000;
-    int geometryNumber = 8;
-    int numberOfIterations = 10000;
+    int populationNumber = 2000;
+    int geometryNumber = 12;
+    int numberOfIterations = 20000;
 
     CData.SetRadius(1);
     GenotypeData<CircleData> GData1 = GenotypeData<CircleData>(geometryNumber, R_0_10_0_10, CData);
@@ -75,11 +75,14 @@ int main()
     double highest_fitness = 0;
     int temperatura = 2;
     EA.SetMutationDelta(3);
-    EA.SetCrossoverProbability(0.75);
+    EA.SetCrossoverProbability(0.80);
     for(int i=0; i<numberOfIterations; i++){
     //mutacija metoda kaljenja
-     if(i>1 && i%5==0 && temperatura<=10){
+     if(i>1 && i%1000==0 && temperatura<=10){
          EA.SetMutationProbability(1/temperatura);
+        //  if(i==70){
+        //     EA.SetMutationDelta(2);
+        //  }
          temperatura++;
      }
 
