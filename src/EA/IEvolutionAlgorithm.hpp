@@ -56,6 +56,11 @@ class IEvolutionAlgorithm{
         GenotypeVector GetPopulation();
 
         /**
+         * @returns double The current best fitness score.
+         */
+        double GetBestFitnessScore();
+
+        /**
          * @param double The crossover probability. Value between 0 and 1.
          */
         void SetCrossoverProbability(double p);
@@ -74,19 +79,12 @@ class IEvolutionAlgorithm{
         /**
          * Normalises fitness values of the population, so all values lay between 0 and 1.
          */
-        void NormaliseFitnesScore();
-
-        /**
-         * Perform a crossover of a pair of genomes.
-         * 
-         * @param first A genotype ready for crossover.
-         * @param second A genotype ready for crossover.
-         */
-        virtual void CrossoverPairOfGenomes(Genotype_Ptr &first, Genotype_Ptr &second);
+        virtual void NormaliseFitnesScore();
 
         Population<Factory, GeometryData> m_population;
         double m_mutation_probability{};
         double m_crossover_probability{}; 
+        double m_current_best_fitness_score{};
         float m_mutation_delta{};
         GeometryHelper<GeometryData> m_GH;
 };

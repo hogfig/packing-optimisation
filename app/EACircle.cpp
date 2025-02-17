@@ -2,9 +2,9 @@
 #include <random>
 #include <time.h>
 
-EACircle::EACircle(int populationSize, std::vector<GenotypeData<CircleData>> genotypeData) :
-IEvolutionAlgorithm<CircleFactory,CircleData>(populationSize, genotypeData,0.6,0.1,1),
-m_numberOfThreads(4),
+EACircle::EACircle(int populationSize, std::vector<GenotypeData<CircleData>> genotypeData, int num_threads) :
+IEvolutionAlgorithm<CircleFactory,CircleData>(populationSize, genotypeData,0.1,0.6,1),
+m_numberOfThreads(num_threads),
 m_TP(std::make_shared<ThreadPool>(m_numberOfThreads))
 {
     if(populationSize%2 != 0 || populationSize == 0){
@@ -16,12 +16,12 @@ m_TP(std::make_shared<ThreadPool>(m_numberOfThreads))
 EACircle::GenotypeVector EACircle::crossoverWorker(EACircle::GenotypeVector population)
 {
     EACircle::GenotypeVector temp_population;
-
+    int elliteCount{0};
     for(int i=0; i<population.size()/2; i++){
         float r_num = (float)rand()/RAND_MAX;
         if(r_num < m_crossover_probability){
             //Crossover pair.
-            CrossoverPairOfGenomes(population[2*i], population[(2*i)+1]);
+            CrossoverPairOfGenomes(population[2*i], population[(2*i)+1], elliteCount, population.size());
             //Put new pair in temporary population.
             temp_population.push_back(std::make_shared<Genotype<CircleFactory,CircleData>>(*population[2*i]));
             temp_population.push_back(std::make_shared<Genotype<CircleFactory,CircleData>>(*population[(2*i)+1]));
@@ -127,4 +127,114 @@ void EACircle::Mutation()
     //Set new population.
     m_population.SetPopulation(temp_population);
     m_population.CalculateFitnessFunction();
+}
+
+bool EACircle::isFitnessEllite(double fitness)
+{
+    if((m_current_best_fitness_score - fitness) <= 0)
+    {
+        return false;
+    }
+
+    if( (m_current_best_fitness_score - fitness) < 0.05*m_current_best_fitness_score)
+    {
+        //fitness is elite
+        return true;
+    }   
+}
+
+// Overwrite CrossoverPairOfGenomes to include Elitism, do it nicely :)
+void EACircle::CrossoverPairOfGenomes(Genotype_Ptr &first, Genotype_Ptr &second, int &elliteCount, int popSize)
+{
+    auto first_geometries = first->GetGeometriesCoppy();
+    auto second_geometries = second->GetGeometriesCoppy();
+    //Ellitism
+    double first_fitness = first->GetFitnessScore();
+    bool isFirstEllite = false;
+    double second_fitness = second->GetFitnessScore();
+    bool isSecondEllite = false;
+    double biggest_fitess{};
+    //Provjeri ako neki od genotipa spadaju u elite
+    //Nakon krizanja provjeri ako elitni genotip ima vecu sposobnost od djece
+    // Uzmi elitni genotip i najbolje dijete ili samo decu
+
+    isFirstEllite = isFitnessEllite(first_fitness);
+    if(isFirstEllite) biggest_fitess = first_fitness;
+
+    isSecondEllite = isFitnessEllite(second_fitness);
+    if(isSecondEllite) biggest_fitess = second_fitness;
+
+    if(isFirstEllite && isSecondEllite)
+    {
+        if(first_fitness >= second_fitness)
+        {
+            biggest_fitess = first_fitness;
+            isSecondEllite = false;
+        }else{
+            biggest_fitess = second_fitness;
+            isFirstEllite = false;
+        }
+    }
+
+    m_GH.AllignGeometries(first_geometries,second_geometries);
+    int point_of_coppy = first_geometries.size()/2;
+
+    second_geometries.insert(second_geometries.end(),first_geometries.begin(),first_geometries.begin()+point_of_coppy);
+    first_geometries.insert(first_geometries.end(),second_geometries.begin(), second_geometries.begin()+point_of_coppy);
+
+    second_geometries.erase(second_geometries.begin(), second_geometries.begin()+point_of_coppy);
+    first_geometries.erase(first_geometries.begin(),first_geometries.begin()+point_of_coppy);
+
+    m_GH.RearangeGeometries(first_geometries);
+    m_GH.RearangeGeometries(second_geometries);
+
+    bool enoughElliteMembers{false};//= elliteCount>0 ? (elliteCount/(float)popSize) >= 0.05 : false;
+    if(elliteCount>0)
+    {
+        float ratio = elliteCount/(float)popSize;
+        enoughElliteMembers = ratio >= 0.01 ? true : false;
+    }
+    
+    if( !isFirstEllite && !isSecondEllite || enoughElliteMembers)
+    {
+        first->SetGeometries(first_geometries);
+        second->SetGeometries(second_geometries);
+        return;
+    }
+
+    auto first_child = std::make_shared<Genotype<CircleFactory,CircleData>>();
+    auto second_child = std::make_shared<Genotype<CircleFactory,CircleData>>();
+
+    first_child->SetGeometries(first_geometries);
+    second_child->SetGeometries(second_geometries);
+    CalculateFitnesFunction(first_child);
+    CalculateFitnesFunction(second_child);
+    
+    auto first_child_fitness = first_child->GetFitnessScore();
+    auto second_child_fitness = second_child->GetFitnessScore();
+    if(first_child_fitness >= second_child_fitness)
+    {
+        first->SetGeometries(first_geometries);
+        if(second_child_fitness>=biggest_fitess)
+        {
+            second->SetGeometries(second_geometries);
+            return;
+        }
+    }else{
+        first->SetGeometries(second_geometries);
+        if(first_child_fitness>=biggest_fitess)
+        {
+            second->SetGeometries(first_geometries);
+            return;
+        }
+    }
+
+    if(isFirstEllite){
+        elliteCount++;
+        second->SetGeometries(first->GetGeometries());
+    }else if(isSecondEllite)
+    {
+        elliteCount++;
+        second->SetGeometries(second->GetGeometries());
+    }
 }

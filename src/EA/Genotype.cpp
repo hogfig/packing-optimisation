@@ -65,6 +65,18 @@ std::vector<std::shared_ptr<IGeometry<GeometryData>>> Genotype<Factory, Geometry
 }
 
 template<typename Factory, typename GeometryData>
+std::vector<std::shared_ptr<IGeometry<GeometryData>>> Genotype<Factory, GeometryData>::GetGeometriesCoppy()
+{
+    std::vector<std::shared_ptr<IGeometry<GeometryData>>> coppiedVector;
+    for(const auto& g : m_geometries)
+    {
+        auto shr = m_geometry_factory.CreateObject(g->GetGeometryData());
+        coppiedVector.push_back(shr);
+    }
+    return coppiedVector;
+}
+
+template<typename Factory, typename GeometryData>
 void Genotype<Factory, GeometryData>::SetGeometries(std::vector<std::shared_ptr<IGeometry<GeometryData>>> geometries){
     m_geometries = geometries;
 }

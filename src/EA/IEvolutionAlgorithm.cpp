@@ -29,7 +29,8 @@ IEvolutionAlgorithm<Factory, GeometryData>::IEvolutionAlgorithm(
     m_population{populationSize,genotypeData},
     m_crossover_probability{mutation_probability},
     m_mutation_probability{rossover_probability},
-    m_mutation_delta{mutation_delta}
+    m_mutation_delta{mutation_delta},
+    m_current_best_fitness_score{0}
 {
 }
 
@@ -41,6 +42,11 @@ void IEvolutionAlgorithm<Factory, GeometryData>::SortPopulation(){
 template<typename Factory, typename GeometryData>
 std::vector<std::shared_ptr<Genotype<Factory, GeometryData>>> IEvolutionAlgorithm<Factory, GeometryData>::GetPopulation(){
     return m_population.GetPopulation();
+}
+template<typename Factory, typename GeometryData>
+double IEvolutionAlgorithm<Factory, GeometryData>::GetBestFitnessScore()
+{
+    return m_current_best_fitness_score;
 }
 
 template<typename Factory, typename GeometryData>
@@ -80,6 +86,8 @@ void IEvolutionAlgorithm<Factory, GeometryData>::Selection(){
 
     auto genotypeVecor = m_population.GetPopulation();
 
+    m_current_best_fitness_score = genotypeVecor.back()->GetFitnessScore();
+
     std::vector<double> rulletVector{0.0};
     for(int i=0; i< genotypeVecor.size(); i++){
         rulletVector.push_back(genotypeVecor[i]->GetNormalizedFitnessScore() + rulletVector[i]);
@@ -101,26 +109,6 @@ void IEvolutionAlgorithm<Factory, GeometryData>::Selection(){
     }
 
     m_population.SetPopulation(selectedPopulation);
-}
-
-template<typename Factory, typename GeometryData>
-void IEvolutionAlgorithm<Factory, GeometryData>::CrossoverPairOfGenomes(std::shared_ptr<Genotype<Factory,GeometryData>> &first, std::shared_ptr<Genotype<Factory,GeometryData>> &second){
-    auto first_geometries = first->GetGeometries();
-    auto second_geometries = second->GetGeometries();
-    m_GH.AllignGeometries(first_geometries,second_geometries);
-    int point_of_coppy = first_geometries.size()/2;
-
-    second_geometries.insert(second_geometries.end(),first_geometries.begin(),first_geometries.begin()+point_of_coppy);
-    first_geometries.insert(first_geometries.end(),second_geometries.begin(), second_geometries.begin()+point_of_coppy);
-
-    second_geometries.erase(second_geometries.begin(), second_geometries.begin()+point_of_coppy);
-    first_geometries.erase(first_geometries.begin(),first_geometries.begin()+point_of_coppy);
-
-    m_GH.RearangeGeometries(first_geometries);
-    m_GH.RearangeGeometries(second_geometries);
-
-    first->SetGeometries(first_geometries);
-    second->SetGeometries(second_geometries);
 }
 
 template<typename Factory, typename GeometryData>

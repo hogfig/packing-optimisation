@@ -32,6 +32,11 @@ class Genotype{
         IGeometryVector GetGeometries();
 
         /**
+         * @returns IGeometryVector vector of all coppied geometries in a Genotype.
+         */
+        IGeometryVector GetGeometriesCoppy();
+
+        /**
          * @brief Sets the m_geometries attribute.
          * 
          * @param geometries vector of geometries.
